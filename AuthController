@@ -1,0 +1,32 @@
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api")
+public class AuthController {
+
+    private final UserLoginRepository userLoginRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthController(UserLoginRepository userLoginRepository, PasswordEncoder passwordEncoder) {
+        this.userLoginRepository = userLoginRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        String appUserId = loginRequest.getAppUserId();
+        String providedPassword = loginRequest.getPassword();
+        
+        UserLogin userLogin = userLoginRepository.findByAppUserId(appUserId);
+        
+        if (userLogin != null && passwordEncoder.matches(providedPassword, userLogin.getPasswordHash())) {
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        }
+    }
+}
