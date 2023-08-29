@@ -1,0 +1,52 @@
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class UserLogin {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String appUserId;
+    private String passwordHash;
+
+    // Constructors, getters, and setters
+
+    // Empty constructor
+    public UserLogin() {
+    }
+
+    // Parameterized constructor
+    public UserLogin(String appUserId, String passwordHash) {
+        this.appUserId = appUserId;
+        this.passwordHash = passwordHash;
+    }
+
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getAppUserId() {
+        return appUserId;
+    }
+
+    public void setAppUserId(String appUserId) {
+        this.appUserId = appUserId;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+}
