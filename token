@@ -1,0 +1,11 @@
+public String generateToken(String username) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + EXPIRATION_TIME);
+
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(now)
+                .setExpiration(expiration)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
