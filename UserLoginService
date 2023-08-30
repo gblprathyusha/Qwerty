@@ -1,0 +1,30 @@
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserLoginService implements UserDetailsService {
+
+    private final UserLoginRepository userLoginRepository;
+
+    public UserLoginService(UserLoginRepository userLoginRepository) {
+        this.userLoginRepository = userLoginRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String appUserId) throws UsernameNotFoundException {
+        UserLogin userLogin = userLoginRepository.findByAppUserId(appUserId);
+
+        if (userLogin == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        return User.builder()
+                .username(userLogin.getAppUserId())
+                .password(userLogin.getPasswordHash())
+                .roles("USER")
+                .build();
+    }
+}
