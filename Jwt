@@ -1,0 +1,69 @@
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-api</artifactId>
+    <version>0.11.2</version>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-impl</artifactId>
+    <version>0.11.2</version>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-jackson</artifactId>
+    <version>0.11.2</version>
+</dependency>
+
+
+
+
+
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+// ... other imports ...
+
+@RestController
+public class LoginController {
+
+    // ... existing code ...
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        // ... existing code ...
+
+        if (user == null) {
+            return ResponseEntity.status(401).body("User not found");
+        }
+
+        if (user.getPasswordHash().equals(loginRequest.getPasswordHash())) {
+            String jwtToken = generateJwtToken(user.getAppUserId());
+            return ResponseEntity.ok(jwtToken);
+        } else {
+            return ResponseEntity.status(401).body("Invalid credentials");
+        }
+    }
+
+    private String generateJwtToken(long userId) {
+        String jwtSecret = "yourSecretKey"; // Replace with your secret key
+        return Jwts.builder()
+                .setSubject(Long.toString(userId))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()), SignatureAlgorithm.HS256)
+                .compact();
+    }
+}
+
+
+
+import java.security.SecureRandom;
+import java.util.Base64;
+
+// ...
+
+// Generate a strong secret key
+byte[] secretBytes = new byte[64];
+new SecureRandom().nextBytes(secretBytes);
+String jwtSecret = Base64.getEncoder().encodeToString(secretBytes);
+
