@@ -1,0 +1,44 @@
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collections;
+
+public class JwtAuthorizationFilter extends AbstractAuthenticationProcessingFilter {
+
+    private static final String JWT_SECRET = "YOUR_SUPER_SECRET_KEY";
+
+    public JwtAuthorizationFilter() {
+        super(new AntPathRequestMatcher("/**")); // Match all requests
+    }
+
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        // No authentication logic needed here
+        return null;
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        Claims claims = Jwts.parser()
+                .setSigningKey(JWT_SECRET.getBytes())
+                .parseClaimsJws(request.getHeader("Authorization").replace("Bearer ", ""))
+                .getBody();
+
+        String username = claims.getSubject();
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                username, null, Collections.emptyList());
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        chain.doFilter(request, response);
+    }
+}
