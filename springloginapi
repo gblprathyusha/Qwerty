@@ -1,0 +1,83 @@
+LoginController.java
+
+import com.sc.ganga.rwtool.backend.entities.AppUser;
+import com.sc.ganga.rwtool.backend.entities.LoginRequest;
+import com.sc.ganga.rwtool.backend.repositories.AppUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class LoginController {
+
+    @Autowired
+    private AppUserRepository appuserrepository;
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+       long appUserId = loginRequest.getAppUserId();
+        String password = loginRequest.getPasswordHash();
+        AppUser user = appuserrepository.findByAppUserId(appUserId);
+        System.out.println(appUserId+"from request");
+        System.out.println("from repository"+user.getAppUserId()+user.getPasswordHash());
+        if (user == null) {
+            return ResponseEntity.status(401).body("User not found");
+        }
+        if ( user.getPasswordHash().equals(loginRequest.getPasswordHash())) {
+            return ResponseEntity.ok("Login successful");
+        }
+        else
+        {
+            return ResponseEntity.status(401).body("Invalid credentials");
+        }
+
+}}
+
+
+
+LoginRequest.java
+
+
+package com.sc.ganga.rwtool.backend.entities;
+public class LoginRequest {
+    private long AppUserId;
+    private String PasswordHash;
+
+    public long getAppUserId() {
+        return AppUserId;
+    }
+
+    public void setAppUserId(long appUserId) {
+        AppUserId = appUserId;
+    }
+
+    public String getPasswordHash() {
+        return PasswordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        PasswordHash = passwordHash;
+    }
+}
+
+
+
+AppUserRepository.java
+
+
+package com.sc.ganga.rwtool.backend.repositories;
+
+import com.sc.ganga.rwtool.backend.entities.AppUser;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+
+
+@Repository
+public interface AppUserRepository extends JpaRepository<AppUser, Long > {
+ AppUser findByAppUserId(long appUserId);
+}
+
