@@ -1,0 +1,42 @@
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@SpringBootApplication
+public class LoginApiApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(LoginApiApplication.class, args);
+    }
+}
+
+@RestController
+class UserController {
+    private final Map<String, String> userDatabase = new HashMap<>();
+
+    // Initialize with a sample user
+    public UserController() {
+        userDatabase.put("username", "password");
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody UserCredentials credentials) {
+        String storedPassword = userDatabase.get(credentials.getUsername());
+        if (storedPassword != null && storedPassword.equals(credentials.getPassword())) {
+            return "Login successful!";
+        } else {
+            return "Login failed!";
+        }
+    }
+}
+
+class UserCredentials {
+    private String username;
+    private String password;
+
+    // getters and setters
+}
