@@ -1,0 +1,32 @@
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class LoginController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        // Get user credentials from the request body
+        String appUserId = loginRequest.getAppUserId();
+        String password = loginRequest.getPassword();
+
+        // Retrieve user credentials from the database based on appUserId
+        User user = userRepository.findByAppUserId(appUserId);
+        if (user == null) {
+            return ResponseEntity.status(401).body("User not found");
+        }
+
+        // Compare the provided password with the stored password hash
+        if (PasswordHashUtil.verifyPassword(password, user.getPasswordHash())) {
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.status(401).body("Invalid credentials");
+        }
+    }
+}
