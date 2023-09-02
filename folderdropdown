@@ -1,0 +1,36 @@
+import React, { useState } from "react";
+import Select from "react-select";
+import  './GrantAccess.css';
+
+export default function Dropdown(props) {
+
+  const optionList = [
+    { value: "Compliance", label: "Compliance" },
+    { value: "Geneva", label: "Geneva" },
+    { value: "AML", label: "AML" },
+    { value: "Finance", label: "Finance" },
+    { value: "Operations", label: "Operations" }
+  ];
+
+
+
+  function handleSelect(data) {
+    props.folderHandler(data);
+  }
+
+  return (
+    <div className="Dropdown">
+      <h2>Folder Name </h2>
+      <div className="dropdown-container">
+        <Select
+          options={optionList}
+          placeholder="Select Folder"
+          value={props.folder}
+          onChange={handleSelect}
+          isSearchable={true}
+          isMulti
+        />
+      </div>
+    </div>
+  );
+}
