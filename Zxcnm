@@ -1,0 +1,50 @@
+import React, { useState } from "react";
+import Select from "react-select";
+import { Button } from "@mui/material";
+import './GrantAccess.css';
+
+export default function Dropdown(props) {
+  const [selectedFolder, setSelectedFolder] = useState(null);
+  const [error, setError] = useState("");
+
+  const optionList = [
+    { value: "Compliance", label: "Compliance" },
+    { value: "Geneva", label: "Geneva" },
+    { value: "AML", label: "AML" },
+    { value: "Finance", label: "Finance" },
+    { value: "Operations", label: "Operations" }
+  ];
+
+  const handleSelect = (data) => {
+    setSelectedFolder(data);
+  };
+
+  const handleSubmit = () => {
+    if (selectedFolder === null) {
+      setError("Please select a folder");
+    } else {
+      // Call your folderHandler or any other logic here
+      props.folderHandler(selectedFolder);
+    }
+  };
+
+  return (
+    <div className="Dropdown">
+      <h2>Folder Name </h2>
+      <div className="dropdown-container">
+        <Select
+          options={optionList}
+          placeholder="Select Folder"
+          value={selectedFolder}
+          onChange={handleSelect}
+          isSearchable={true}
+          isMulti
+        />
+        {error && <p className="error-text">{error}</p>}
+        <Button onClick={handleSubmit} variant="contained" color="primary">
+          Submit
+        </Button>
+      </div>
+    </div>
+  );
+}
