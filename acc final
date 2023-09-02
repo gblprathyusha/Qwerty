@@ -1,0 +1,286 @@
+
+// import React from 'react';
+// import { useForm } from 'react-hook-form';
+// import { DevTool } from '@hookform/devtools';
+// import toast, { Toaster } from 'react-hot-toast';
+// import  './GrantAccess.css';
+// import { useHistory } from 'react-router-dom';
+// import Select from "react-select";
+// import Folderdropdown from './Folderdropdown';
+// import Filedropdown from './Filedropdown';
+// import { yupResolver } from "@hookform/resolvers/yup";
+// import * as yup from "yup";
+
+// const GrantAccess2 = (props) => {
+
+//     const [group,setGroup]=React.useState('');
+//     const [folder,setFolder]=React.useState('');
+//     const [file,setFile]=React.useState('');
+//     const [filesForForm,setFilesForForm]=React.useState([]);
+//     const [foldersForForm,setFoldersForForm]=React.useState([]);
+
+
+//     const fileHandler=((data)=>{
+//         setFile(data);
+//     });
+
+    
+//     const folderHandler=((data)=>{
+//       setFolder(data);
+//     })
+  
+//   const validationschema = yup.object().shape({
+//     Group: yup.string().required('Group is required'),
+//     FolderName: yup.string().required('Folder Name is required'),
+//     FileName: yup.string().required('File Name is required'),
+//   });
+
+
+//      const notify = (state, message) =>
+//     toast[state](message, {
+//       duration: 1500,
+//     });
+
+//   const { register, control, handleSubmit, reset, formState  } = useForm({
+//     defaultValues: {
+//         FolderName: '',
+//         FileName: '',
+//       Group: ''    
+//     },
+//     mode: 'onSubmit',
+//     resolver:yupResolver(validationschema),
+//   });
+
+ 
+//   const {
+//     isSubmitSuccessful,
+//     isSubmitting,
+//     isSubmitted,
+//     errors,
+//     dirtyFields,
+//     touchedFields,
+//   } = formState;
+
+//   const submit = async (data) => {
+//     if (formState.isValid) {
+//       console.log('form submitted', group, file, folder);
+//       notify('success', 'Form submitted successfully');
+//       setFile('');
+//       setFolder('');
+//     }
+//     else {
+//       notify('error', 'Form is invalid');
+//     }
+//   };
+
+ 
+
+//   // const submissionError = (errors) => {
+//   //     console.log('submission errors', errors);
+//   //      notify('error', 'Form is invalid');
+//   // };
+
+//   React.useEffect(() => {
+//     if (isSubmitSuccessful) {
+//       reset();
+//     }
+//   }, [isSubmitSuccessful]);
+
+ 
+//   React.useEffect(()=>{
+//     console.log(props.allFiles);
+//     let fileData=props.allFiles && props.allFiles.map((ele)=>({value:ele.fileName,label:ele.fileName}));
+//     console.log(fileData);
+//     setFilesForForm(fileData);
+
+//   },[])
+
+
+//   // React.useEffect(()=>{
+//   //   console.log(props.allFolders);
+//   //   let folderData=props.allFolders && props.allFolders.map((ele)=>({value:ele.folderName,label:ele.folderName}));
+//   //   console.log(folderData);
+//   //   setFoldersForForm(folderData);
+
+//   // },[])
+
+//   return (
+//      <>
+//      <div className="body-container">
+//      <div className="form-container">
+//         <h1>Grant Access</h1>
+//               <form noValidate onSubmit={handleSubmit(submit)}>
+//                 <div className="d-flex flex-row" >
+//                     <div className='from-group mb-3' style={{marginLeft:"20px"}}>
+//                        <h4> Group </h4>
+//                        <select
+//                         className='form-select'
+//                         id='Group'
+//                         {...register('Group')}
+//                             >
+//                             <option value="" disabled selected>Choose</option>
+//                             <option value='Finance'>Finance</option>
+//                             <option value='Operation'>Operation</option>
+//                             <option value='Compliance'>Compliance</option>
+//                 </select>
+//                 {errors.Group && (
+//                   <p className='text-danger'>{ errors.Group.message}</p>
+//                 )}
+//                     </div>
+//                 </div>
+//             <Folderdropdown folderHandler={folderHandler} folder={folder} errors={errors.FolderName}   />
+//             <Filedropdown fileHandler={fileHandler} file={file}  errors={errors.FolderName} />
+            
+//             <button type="submit"className ="button grant-button" id='grant-button'>Grant</button>
+//             <button type='submit' className="button deny-button" id='deny-button'>Deny</button>
+//       </form>
+//     </div>
+// </div>
+//         <Toaster/>
+//    </>
+//   );
+// };
+// export default GrantAccess2;
+
+
+
+
+import React from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { DevTool } from '@hookform/devtools';
+import toast, { Toaster } from 'react-hot-toast';
+import  './GrantAccess.css';
+import { useHistory } from 'react-router-dom';
+import Select from "react-select";
+import Folderdropdown from './Folderdropdown';
+import Filedropdown from './Filedropdown';
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+const GrantAccess2 = (props) => {
+
+    const [group,setGroup]=React.useState('');
+    const [folder,setFolder]=React.useState('');
+    const [file,setFile]=React.useState('');
+    const [filesForForm,setFilesForForm]=React.useState([]);
+    const [foldersForForm,setFoldersForForm]=React.useState([]);
+
+
+    const fileHandler=((data)=>{
+        setFile(data);
+    });
+
+    
+    const folderHandler=((data)=>{
+      setFolder(data);
+  })
+
+
+     const notify = (state, message) =>
+    toast[state](message, {
+      duration: 1500,
+    });
+   const validationschema = yup.object().shape({
+    Group: yup.string().required('Group is required'),
+    FolderName: yup.string().required('Folder Name is required'),
+    FileName: yup.string().required('File Name is required'),
+  });
+
+  const { register, control, handleSubmit, reset, formState } = useForm({
+    defaultValues: {
+        FolderName: '',
+        FileName: '',
+      Group: ''    
+    },
+    mode: 'onSubmit',
+    resolver:yupResolver(validationschema),
+  });
+
+ 
+
+ 
+  const {
+    isSubmitSuccessful,
+    isSubmitting,
+    isSubmitted,
+    errors,
+    dirtyFields,
+    touchedFields,
+  } = formState;
+
+  const submit = (group) => {
+      console.log('form submitted', group,file,folder);
+       notify('success', 'Form submitted successfully');
+       setFile('');
+       setFolder('');
+  };
+
+ 
+
+  const submissionError = (errors) => {
+      console.log('submission errors', errors);
+       notify('error', 'Form is invalid');
+  };
+
+  React.useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [isSubmitSuccessful]);
+
+ 
+  React.useEffect(()=>{
+    console.log(props.allFiles);
+    let fileData=props.allFiles && props.allFiles.map((ele)=>({value:ele.fileName,label:ele.fileName}));
+    console.log(fileData);
+    setFilesForForm(fileData);
+
+  },[])
+
+
+  // React.useEffect(()=>{
+  //   console.log(props.allFolders);
+  //   let folderData=props.allFolders && props.allFolders.map((ele)=>({value:ele.folderName,label:ele.folderName}));
+  //   console.log(folderData);
+  //   setFoldersForForm(folderData);
+
+  // },[])
+
+  return (
+     <>
+     <div className="body-container">
+     <div className="form-container">
+        <h1>Grant Access</h1>
+              <form noValidate onSubmit={handleSubmit(submit, submissionError)}>
+                <div className="d-flex flex-row" >
+                    <div className='from-group mb-3' style={{marginLeft:"20px"}}>
+                       <h4> Group </h4>
+                       <select
+                        className='form-select'
+                        id='Group'
+                        {...register('Group')}
+                            >
+                            <option value="" disabled selected>Choose</option>
+                            <option value='Finance'>Finance</option>
+                            <option value='Operation'>Operation</option>
+                            <option value='Compliance'>Compliance</option>
+                </select>
+                 {errors.Group && (
+                  <p className='text-danger'>{ errors.Group.message}</p>
+                )}
+                    </div>
+            </div>
+            
+            <Folderdropdown folderHandler={folderHandler} folder={folder}  errors={errors.FolderName}    />
+            <Filedropdown fileHandler={fileHandler} file={file}  errors={errors.FileName}   />
+            <button type="submit"className ="button grant-button" id='grant-button'>Grant</button>
+            <button type='submit' className="button deny-button" id='deny-button'>Deny</button>
+      </form>
+    </div>
+</div>
+        <Toaster/>
+   </>
+  );
+};
+
+export default GrantAccess2;
