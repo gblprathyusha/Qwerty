@@ -1,0 +1,52 @@
+import React from "react";
+import Select from "react-select";
+import { TextField, Button } from "@material-ui/core";
+import { useForm, Controller } from "react-hook-form";
+import './GrantAccess.css';
+
+export default function Dropdown(props) {
+  const { handleSubmit, control, errors } = useForm();
+
+  const optionList = [
+    { value: "Compliance", label: "Compliance" },
+    { value: "Geneva", label: "Geneva" },
+    { value: "AML", label: "AML" },
+    { value: "Finance", label: "Finance" },
+    { value: "Operations", label: "Operations" }
+  ];
+
+  const onSubmit = (data) => {
+    props.folderHandler(data.selectedFolder);
+  };
+
+  return (
+    <div className="Dropdown">
+      <h2>Folder Name </h2>
+      <div className="dropdown-container">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="selectedFolder"
+            control={control}
+            rules={{ required: "Please select a folder" }}
+            defaultValue={[]}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={optionList}
+                placeholder="Select Folder"
+                isSearchable={true}
+                isMulti
+              />
+            )}
+          />
+          {errors.selectedFolder && (
+            <p className="error-text">{errors.selectedFolder.message}</p>
+          )}
+          <Button type="submit" variant="contained" color="primary">
+            Submit
+          </Button>
+        </form>
+      </div>
+    </div>
+  );
+}
